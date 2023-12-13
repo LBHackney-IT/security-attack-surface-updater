@@ -1,0 +1,24 @@
+name: Check attack surface against Route53
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 9 * * 1'  # every Monday at 9am
+
+jobs:
+  scheduled-job:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        uses: VaultVulp/action-pipenv@v2.0.1
+        with:
+          command: install # Install all dependencies
+    
+      - name: Check attack surface changes
+        uses: VaultVulp/action-pipenv@v2.0.1
+        with:
+          command: run ./attack_surface_update/list_attack_surface_changes.py
+        env:
+          SLACK_WEBHOOK_TOKEN: ${{ secrets.SLACK_WEBHOOK_URL }}
