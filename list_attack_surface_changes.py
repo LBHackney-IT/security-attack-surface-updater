@@ -7,25 +7,7 @@ from slack_sdk.webhook import WebhookClient
 
 def load_google_sheet(url, sheet_title="Sheet1", credentials_file="./google_service_account_credentials.json"):
     """Loads a Google Sheet and returns the contents of the sheet as an array of dictionaries"""
-    # google_service_account = gspread.service_account(filename=credentials_file)
-
-    google_service_account_credentials = {
-        "type": "service_account",
-        "project_id": os.environ['GOOGLE_SERVICE_ACCOUNT_PROJECT_ID'],
-        "private_key_id": os.environ['GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY_ID'],
-        "private_key": os.environ['GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY'],
-        "client_email": os.environ['GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL'],
-        "client_id": os.environ['GOOGLE_SERVICE_ACCOUNT_CLIENT_ID'],
-        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-        "token_uri": "https://oauth2.googleapis.com/token",
-        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-        "client_x509_cert_url": os.environ['GOOGLE_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL'],
-        "universe_domain": "googleapis.com"
-    }
-
-    print(len(google_service_account_credentials["private_key"]))
-
-    google_service_account = gspread.service_account_from_dict(google_service_account_credentials)
+    google_service_account = gspread.service_account(filename=credentials_file)
 
     workbook = google_service_account.open_by_url(url)
     worksheet = workbook.worksheet(sheet_title)

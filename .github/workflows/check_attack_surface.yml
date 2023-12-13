@@ -16,6 +16,12 @@ jobs:
         with:
           command: install # Install all dependencies
     
+      - name: Retrieve the Google credentials and decode them to a file
+        env:
+          GOOGLE_SERVICE_ACCOUNT_BASE64: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_BASE64 }}
+        run: |
+          echo $GOOGLE_SERVICE_ACCOUNT_BASE64 | base64 --decode > google_service_account_credentials.json
+
       - name: Check attack surface changes
         uses: VaultVulp/action-pipenv@v2.0.1
         with:
