@@ -27,7 +27,7 @@ jobs:
         with:
           command: run ./list_attack_surface_changes.py
         env:
-          SLACK_WEBHOOK_TOKEN: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           GOOGLE_SERVICE_ACCOUNT_PROJECT_ID: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_PROJECT_ID }}
           GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY_ID: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY_ID }}
           GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY }}
