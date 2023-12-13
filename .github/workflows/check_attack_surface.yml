@@ -10,8 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Check Python
-        run: python -v
+
       - name: Install dependencies
         uses: VaultVulp/action-pipenv@v2.0.1
         with:
