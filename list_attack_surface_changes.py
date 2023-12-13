@@ -22,6 +22,9 @@ def load_google_sheet(url, sheet_title="Sheet1", credentials_file="./google_serv
         "client_x509_cert_url": os.environ['GOOGLE_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL'],
         "universe_domain": "googleapis.com"
     }
+
+    print(len(google_service_account_credentials["private_key"]))
+
     google_service_account = gspread.service_account_from_dict(google_service_account_credentials)
 
     workbook = google_service_account.open_by_url(url)
