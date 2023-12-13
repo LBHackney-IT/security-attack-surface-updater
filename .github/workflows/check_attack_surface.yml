@@ -19,6 +19,6 @@ jobs:
       - name: Check attack surface changes
         uses: VaultVulp/action-pipenv@v2.0.1
         with:
-          command: run ./attack_surface_update/list_attack_surface_changes.py
+          command: run ./list_attack_surface_changes.py
         env:
           SLACK_WEBHOOK_TOKEN: ${{ secrets.SLACK_WEBHOOK_URL }}
