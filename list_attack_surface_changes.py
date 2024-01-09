@@ -13,9 +13,6 @@ def load_google_sheet(url, sheet_title="Sheet1", credentials_file="./google_serv
     worksheet = workbook.worksheet(sheet_title)
     return worksheet.get_all_records()
 
-def pretty_print_list(list_to_print, title):
-    print(format_list(list_to_print, title))
-
 def bold(text):
     return f"*{text}*"
 
@@ -99,37 +96,58 @@ for record in attack_surface_records:
     else:
         non_hackney_domains.append(domain_name)
 
-domains_to_remove = set(attack_surface_domains).difference(set(route53_domains))
+domains_to_add = set(route53_domains).difference(set(attack_surface_domains))
 
+domains_to_remove = set(attack_surface_domains).difference(set(route53_domains))
 domains_to_remove = [domain for domain in domains_to_remove if domain not in ns_domains]
 
 script_repo_url = "https://github.com/LBHackney-IT/security-attack-surface-updater"
-slack_message = f"The attack surface has been checked against Route53 with this <{script_repo_url}|script>\n\n" 
-slack_message += format_list(set(route53_domains).difference(set(attack_surface_domains)), 
-                             title=f"To be added to the <{attack_surface_url}|attack surface>")
 
-slack_message += format_list(domains_to_remove,
-                             title=f"Things we might want to REMOVE from the <{attack_surface_url}|attack surface> (check these aren't nameservers)")
+slack_blocks = [{
+                  "type": "header",
+                  "text": {
+                      "type": "plain_text",
+                      "text": "📣 Potential attack surface changes 📣"
+                  }
+              }, {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": f"The attack surface has been checked against Route53 with <{script_repo_url}|this script>"
+                }
+            }]
 
-print(slack_message)
+
+if domains_to_add:
+    slack_blocks.append({
+            "type": "section",
+			"text": {
+                "type": "mrkdwn",
+                "text": f"To be added to the <{attack_surface_url}|attack surface>:\n\n{'\n'.join(['• ' + domain + '\n' for domain in domains_to_add])}"
+            }
+        })
+
+if domains_to_remove:
+    slack_blocks.append({
+            "type": "section",
+			"text": {
+                "type": "mrkdwn",
+                "text": f"Things we might want to REMOVE from the <{attack_surface_url}|attack surface> (check these aren't nameservers):\n\n{'\n'.join(['• ' + domain + '\n' for domain in domains_to_remove])}"
+            }
+        })
+
 # 
 # Uncomment this is you want to see the non-hackney domain list
 #
-# pretty_print_list(non_hackney_domains, title='Non-Hackney domain names. Check these:')
+# print(format_list(non_hackney_domains, title='Non-Hackney domain names. Check these:'))
 
 
-# Post this to slack
-webhook = WebhookClient(os.environ['SLACK_WEBHOOK_URL'])
-response = webhook.send(
-    text="fallback",
-    blocks=[
-        {
-            "type": "section",
-            "text": {
-                "type": "mrkdwn",
-                "text": slack_message
-            }
-        }
-    ]
-)
-
+# Only post to Slack if we have some changes to report (to keep the noise down)
+if domains_to_add or domains_to_remove:
+    webhook = WebhookClient(os.environ['SLACK_WEBHOOK_URL'])
+    response = webhook.send(
+        text="fallback",
+        blocks=slack_blocks
+    )
+else:
+    print("Nothing to report, well done!")
