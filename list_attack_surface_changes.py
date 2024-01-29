@@ -57,6 +57,9 @@ for record in dns_records:
     # Ignore if it's a wildcard record, because we can't do anything with it:
     elif '*.' in record['Name']:
         ignored_records.append(record)
+    # Ignore if it's a LetsEncrypt domain validation record
+    elif record['Name'].startswith('_acme-challenge'):
+        ignored_records.append(record)
     # Ignore if it's a load of random characters
     elif domain_verification_cname_pattern.match(record['Name']):
         ignored_records.append(record)
